@@ -207,7 +207,7 @@ const TEMPLATES = {
 
 const buildExplainPrompt = ({ prescription, diagnosisText, language }) => {
     const medicineLines = prescription.medicines
-        .map((m, i) => `${i + 1}. ${m.name} | Dosage: ${m.dosage} | Duration: ${m.duration || "not given"}`)
+        .map((m, i) => `${i + 1}. ${m.name} | Dosage: ${m.dosage} | Frequency: ${m.frequency || "not given"} | Duration: ${m.duration || "not given"}`)
         .join("\n");
 
     return `You are a friendly medical assistant. Explain a doctor's prescription to the patient in very simple words.
@@ -246,6 +246,7 @@ const normalizeExplanation = (raw, prescription, language) => {
         medicines: prescription.medicines.map((m, i) => ({
             name: m.name,
             dosage: m.dosage,
+            frequency: m.frequency || "",
             duration: m.duration || "",
             purpose: String(aiMedicines[i]?.purpose || "").trim(),
             howToTake: String(aiMedicines[i]?.howToTake || "").trim(),
@@ -266,6 +267,7 @@ const buildFallbackExplanation = (prescription, language) => {
         medicines: prescription.medicines.map((m) => ({
             name: m.name,
             dosage: m.dosage,
+            howToTake: [m.dosage, m.frequency, m.duration].filter(Boolean).join(", "),
             duration: m.duration || "",
             purpose: t.purpose,
             howToTake: m.duration ? `${m.dosage} (${m.duration})` : m.dosage,
