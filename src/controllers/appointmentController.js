@@ -161,3 +161,71 @@ export const getMyAppointments = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// Appointment ka din/time badalna
+export const rescheduleAppointment = async (req, res) => {
+    try {
+        const { date, timeSlot } = req.body;
+
+        const appointment = await Appointment.findById(req.params.id);
+        if (!appointment) {
+            return res.status(404).json({ message: "Appointment nahi mili" });
+        }
+
+        if (["completed", "cancelled"].includes(appointment.status)) {
+            return res.status(400).json({ message: "Is appointment ko reschedule nahi kar sakte" });
+        }
+
+        const clash = await Appointment.findOne({
+            _id: { $ne: appointment._id },
+            doctor: appointment.doctor,
+            date,
+            timeSlot,
+            status: { $ne: "cancelled" },
+        });
+        if (clash) {
+            return res.status(400).json({ message: "Ye time slot pehle se booked hai" });
+        }
+
+        appointment.date = date;
+        appointment.timeSlot = timeSlot;
+        await appointment.save();
+
+        res.json({ message: "Appointment reschedule ho gayi", appointment });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Kisi patient ki saari appointments
+export const getPatientAppointments = async (req, res) => {
+    try {
+        const appointments = await Appointment.find({ patient: req.params.id })
+            .populate("doctor", "name")
+            .sort({ date: -1, timeSlot: -1 });
+
+        res.json(appointments);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Kisi doctor ke kisi din ke booked slots (sirf time, koi patient data nahi)
+export const getAvailability = async (req, res) => {
+    try {
+        const { date, doctorId } = req.query;
+        if (!date || !doctorId) {
+            return res.status(400).json({ message: "date aur doctorId zaroori hain" });
+        }
+
+        const booked = await Appointment.find({
+            doctor: doctorId,
+            date,
+            status: { $ne: "cancelled" },
+        }).select("timeSlot");
+
+        res.json(booked.map((a) => ({ _id: a._id, timeSlot: a.timeSlot })));
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

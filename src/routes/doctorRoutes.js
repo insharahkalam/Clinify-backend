@@ -8,6 +8,7 @@ import {
     createPrescription,
     getMyPrescriptions,
     getRiskFlags,
+    getMyPatients
 } from "../controllers/doctorController.js";
 
 import { requireFeature } from "../middleware/planMiddleware.js";
@@ -54,5 +55,6 @@ router.post(
 );
 
 router.get("/prescriptions", getMyPrescriptions);
+router.get("/patients", getMyPatients);
 
 export default router;

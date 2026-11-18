@@ -17,6 +17,8 @@ import prescriptionRoutes from "./routes/prescriptionRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import subscriptionRoutes from "./routes/subscriptionRoutes.js";
+import reportRoutes from "./routes/reportRoutes.js";
+
 
 await connectDB();
 await createAdmin();
@@ -37,6 +39,7 @@ app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/subscription", subscriptionRoutes);
+app.use("/api/reports", reportRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server port ${PORT} par chal raha hai`));

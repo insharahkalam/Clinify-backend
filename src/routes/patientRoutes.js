@@ -1,34 +1,20 @@
 import express from "express";
-import { body } from "express-validator";
-import validate from "../middleware/validate.js";
 import { protect, allowRoles } from "../middleware/authMiddleware.js";
-import { checkPatientLimit } from "../middleware/planMiddleware.js";
 import {
-    registerPatient,
-    getAllPatients,
-    getPatientById,
-    updatePatient,
-} from "../controllers/receptionistController.js";
+    getMyProfile,
+    updateMyProfile,
+    getMyPrescriptions,
+    getMyTimeline,
+} from "../controllers/patientController.js";
 
 const router = express.Router();
 
-// Is file ke saare routes sirf receptionist ke liye hain
-router.use(protect, allowRoles("receptionist"));
+// Is file ke saare routes sirf patient ke liye hain
+router.use(protect, allowRoles("patient"));
 
-router.post(
-    "/patients",
-    [
-        body("name").notEmpty().withMessage("Naam zaroori hai"),
-        body("email").isEmail().withMessage("Sahi email likhein"),
-        body("password").isLength({ min: 6 }).withMessage("Password kam az kam 6 characters ka ho"),
-    ],
-    validate,
-    checkPatientLimit,
-    registerPatient
-);
-
-router.get("/patients", getAllPatients);
-router.get("/patients/:id", getPatientById);
-router.put("/patients/:id", updatePatient);
+router.get("/profile", getMyProfile);
+router.put("/profile", updateMyProfile);
+router.get("/prescriptions", getMyPrescriptions);
+router.get("/timeline", getMyTimeline);
 
 export default router;

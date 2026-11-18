@@ -7,6 +7,7 @@ import {
     getStaff,
     updateStaff,
     deleteStaff,
+    getPatients
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -31,5 +32,6 @@ router.post(
 router.get("/staff", getStaff);
 router.put("/staff/:id", updateStaff);
 router.delete("/staff/:id", deleteStaff);
+router.get("/patients", getPatients);
 
 export default router;

@@ -115,3 +115,14 @@ export const getRiskFlags = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// Is doctor ke saare patients (jin ki iske saath appointment hai)
+export const getMyPatients = async (req, res) => {
+    try {
+        const ids = await Appointment.distinct("patient", { doctor: req.user._id });
+        const patients = await Patient.find({ _id: { $in: ids } }).populate("user", "name email phone");
+        res.json(patients);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

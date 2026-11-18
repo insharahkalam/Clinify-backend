@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import User from "../models/User.js";
+import Patient from "../models/Patient.js";
 
 // Doctor ya receptionist banana
 export const createStaff = async (req, res) => {
@@ -81,6 +82,19 @@ export const deleteStaff = async (req, res) => {
         }
 
         res.json({ message: "Staff member delete ho gaya" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Admin: patients ki read-only list (medical notes nahi)
+export const getPatients = async (req, res) => {
+    try {
+        const patients = await Patient.find()
+            .select("-medicalNotes")
+            .populate("user", "name email phone")
+            .sort({ createdAt: -1 });
+        res.json(patients);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
