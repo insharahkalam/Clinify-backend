@@ -3,11 +3,13 @@ import { body } from "express-validator";
 import validate from "../middleware/validate.js";
 import { checkPatientLimit } from "../middleware/planMiddleware.js";
 import { register, login } from "../controllers/authController.js";
+import { loginLimiter, registerLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
 router.post(
     "/register",
+    registerLimiter,
     [
         body("name").notEmpty().withMessage("Naam zaroori hai"),
         body("email").isEmail().withMessage("Sahi email likhein"),
@@ -20,9 +22,10 @@ router.post(
 
 router.post(
     "/login",
+    loginLimiter,
     [
-        body("email").isEmail().withMessage("Sahi email likhein"),
-        body("password").notEmpty().withMessage("Password likhein"),
+    body("email").isEmail().withMessage("Sahi email likhein"),
+    body("password").notEmpty().withMessage("Password likhein"),
     ],
     validate,
     login

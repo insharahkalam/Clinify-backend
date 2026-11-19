@@ -7,7 +7,8 @@ import {
     getStaff,
     updateStaff,
     deleteStaff,
-    getPatients
+    getPatients,
+    resetStaffPassword
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -33,5 +34,11 @@ router.get("/staff", getStaff);
 router.put("/staff/:id", updateStaff);
 router.delete("/staff/:id", deleteStaff);
 router.get("/patients", getPatients);
+router.put(
+    "/staff/:id/password",
+    [body("password").isLength({ min: 8 }).withMessage("Password kam az kam 8 characters ka ho")],
+    validate,
+    resetStaffPassword
+);
 
 export default router;

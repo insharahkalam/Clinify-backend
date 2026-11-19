@@ -23,7 +23,7 @@ export const updateMyProfile = async (req, res) => {
         const patient = await Patient.findOneAndUpdate(
             { user: req.user._id },
             { age, gender, address, bloodGroup },
-            { new: true }
+            { returnDocument: "after" }
         );
 
         res.json({ message: "Profile update ho gayi", patient });

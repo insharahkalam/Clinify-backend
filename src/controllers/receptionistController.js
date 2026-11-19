@@ -92,7 +92,7 @@ export const updatePatient = async (req, res) => {
         const updated = await Patient.findByIdAndUpdate(
             req.params.id,
             { age, gender, address, bloodGroup, medicalNotes },
-            { new: true }
+            { returnDocument: "after" }
         ).populate("user", "name email phone");
 
         res.json({ message: "Patient update ho gaya", patient: updated });

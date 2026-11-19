@@ -21,7 +21,7 @@ router.get("/status", protect, allowRoles("admin", "receptionist"), getStatus);
 router.post(
     "/",
     protect,
-    reportUsers,
+    allowRoles("patient", "receptionist"),
     uploadFile, // pehle file, phir neeche ke validators
     [
         body("title").trim().notEmpty().withMessage("Report ka title likhein").isLength({ max: 100 }).withMessage("Title 100 harf se chota rakhein"),

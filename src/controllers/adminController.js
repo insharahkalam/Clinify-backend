@@ -56,7 +56,7 @@ export const updateStaff = async (req, res) => {
         const staff = await User.findOneAndUpdate(
             { _id: req.params.id, role: { $in: ["doctor", "receptionist"] } },
             { name, phone, specialization },
-            { new: true }
+            { returnDocument: "after" }
         ).select("-password");
 
         if (!staff) {
@@ -95,6 +95,27 @@ export const getPatients = async (req, res) => {
             .populate("user", "name email phone")
             .sort({ createdAt: -1 });
         res.json(patients);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Admin: staff ka password reset karna
+export const resetStaffPassword = async (req, res) => {
+    try {
+        const hashed = await bcrypt.hash(req.body.password, 10);
+
+        const staff = await User.findOneAndUpdate(
+            { _id: req.params.id, role: { $in: ["doctor", "receptionist"] } },
+            { password: hashed },
+            { returnDocument: "after" }
+        ).select("name");
+
+        if (!staff) {
+            return res.status(404).json({ message: "Staff member nahi mila" });
+        }
+
+        res.json({ message: `${staff.name} ka password badal diya gaya` });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

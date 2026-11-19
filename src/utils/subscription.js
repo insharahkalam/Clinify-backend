@@ -10,7 +10,7 @@ export const getCurrentPlan = async () => {
         Subscription.findOneAndUpdate(
             { key: "main" },
             { $setOnInsert: { plan: "free" } },
-            { upsert: true, new: true }
+            { upsert: true, returnDocument: "after" }
         );
 
     let subscription;
